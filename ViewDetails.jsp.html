@@ -1,0 +1,62 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<%@ page import="java.util.Random" %>
+<%@ page import="java.sql.*" %>
+
+	<%
+		String fno = request.getParameter("fname");
+		String datea = request.getParameter("date");
+		Random rand = new Random();
+		int s = rand.nextInt(500);
+		String seat = Integer.toString(s);
+		String custname = request.getParameter("custname");
+		String custno = request.getParameter("custno");
+
+
+
+
+		String query;
+		boolean h = false;
+
+		try
+		{	Connection connection = null;
+		Statement stmt;
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			connection = DriverManager.getConnection("jdbc:mysql://localhost/flight","root","");
+
+				stmt = connection.createStatement();
+				query = "select * from Flight where Flight_Number='" + fno
+						+ "'";
+				ResultSet rs = stmt.executeQuery(query);
+				while (rs.next())
+				{
+					h = true;
+				}
+				if (h)
+				{
+					out.println("Flight Number:" + fno + "\nDate:" + datea
+							+ "\nSeatNumber:" + seat + "\nCustomerName:"
+							+ custname + "\nCustNumber:" + custno);
+					String query2 = "insert into SeatReservation values('"+ fno + "','" + datea + "','" + seat + "','"+ custname + "','" + custno + "');";
+					stmt.executeUpdate(query2);
+
+				}
+				else
+				{
+					out.println("flight number doesnot exist");
+				}
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	%>
+	<p>
+		click for flight details <a href="flightdete.jsp">here</a>
+</body>
+</html>
